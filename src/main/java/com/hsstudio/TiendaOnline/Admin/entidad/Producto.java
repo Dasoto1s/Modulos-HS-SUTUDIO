@@ -2,24 +2,25 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.hsstudio.TiendaOnline.entidad;
+package com.hsstudio.TiendaOnline.Admin.entidad;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
-
+import jakarta.persistence.OneToOne;
 
 
 @Entity
 public class Producto {
-       @Id
-       @GeneratedValue(strategy = GenerationType.IDENTITY)
-       @Column(name = "Id_Producto") // Asegúrate de importar javax.persistence.Column
-    private Integer Id_Producto;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "Id_Producto")
+    private Integer idProducto;
 
     private String nombre;
     private String descripcion;
@@ -27,30 +28,22 @@ public class Producto {
     private int talla;
     private String color;
     private String genero;
-    private Integer cantidad;
+    
 
-    // Constructor vacío (necesario para JPA)
+    @OneToOne(mappedBy = "producto", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Inventario inventario;
+    
     public Producto() {
     }
+    
 
-    public Producto(String nombre, String descripcion, String color, float precio, int talla, String genero, int cantidad) {
-    this.nombre = nombre;
-    this.descripcion = descripcion;
-    this.color = color;
-    this.precio = precio;
-    this.talla = talla;
-    this.genero = genero;
-    this.cantidad = cantidad;
-}
-
-
-    // Getters y setters
-    public Integer  getId() {
-        return Id_Producto;
+    public Integer getIdProducto() {
+        return idProducto;
     }
 
-    public void setId(Integer  id) {
-        this.Id_Producto = Id_Producto;
+    public void setIdProducto(Integer idProducto) {
+        this.idProducto = idProducto;
     }
 
     public String getNombre() {
@@ -101,13 +94,32 @@ public class Producto {
         this.genero = genero;
     }
 
-    public Integer getCantidad() {
-        return cantidad;
+    public Inventario getInventario() {
+        return inventario;
     }
 
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
+    public void setInventario(Inventario inventario) {
+        this.inventario = inventario;
     }
+
+    public Producto(Integer idProducto, String nombre, String descripcion, float precio, int talla, String color, String genero, Inventario inventario) {
+        this.idProducto = idProducto;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.precio = precio;
+        this.talla = talla;
+        this.color = color;
+        this.genero = genero;
+        this.inventario = inventario;
+    }
+
+    
+    
+    
 }
+
+
+
+
 
 
