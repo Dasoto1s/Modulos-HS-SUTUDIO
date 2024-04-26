@@ -25,11 +25,20 @@ public class Inventario {
     private Float cantidad;
     private Integer stock;
     private Integer Cantidad_minima_requerida;
+    
+     @OneToOne(mappedBy = "inventario")
+    private Admin admin;
+    
 
     @OneToOne
     @JoinColumn(name = "Id_Producto5")
     @JsonBackReference
     private Producto producto;
+    
+    
+    
+    public Inventario() {
+}
 
     public Integer getIdInventario() {
         return idInventario;
@@ -71,8 +80,15 @@ public class Inventario {
         this.producto = producto;
     }
 
- public Inventario() {
-}
+    public Admin getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Admin admin) {
+        this.admin = admin;
+    }
+
+ 
 
 
    
