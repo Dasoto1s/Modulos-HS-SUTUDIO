@@ -4,6 +4,7 @@ import com.hsstudio.TiendaOnline.Admin.entidad.Admin;
 import com.hsstudio.TiendaOnline.Admin.entidad.CrearProductoRequest;
 import com.hsstudio.TiendaOnline.Admin.entidad.Inventario;
 import com.hsstudio.TiendaOnline.Admin.entidad.Producto;
+import com.hsstudio.TiendaOnline.Admin.entidad.ProductoDTO;
 import com.hsstudio.TiendaOnline.Admin.repositorio.AdminRepositorio;
 import com.hsstudio.TiendaOnline.Admin.repositorio.InventarioRepositorio;
 import com.hsstudio.TiendaOnline.Admin.repositorio.ProductoRepositorio;
@@ -19,6 +20,7 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/productos")
@@ -122,5 +124,44 @@ public class ProductoControlador {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Correo electrónico o contraseña incorrectos");
         }
+        
+        
     }
+    
+   @GetMapping("/buscar")
+public List<ProductoDTO> buscarProductos(@RequestParam(required = false) String palabrasClave,
+                                         @RequestParam(required = false) Integer talla) {
+    List<Producto> productos;
+    if (palabrasClave != null && talla != null) {
+        productos = productoRepositorio.findByNombreContainingIgnoreCaseAndTalla(palabrasClave, talla);
+    } else if (palabrasClave != null) {
+        productos = productoRepositorio.findByNombreContainingIgnoreCase(palabrasClave);
+    } else if (talla != null) {
+        productos = productoRepositorio.findByTalla(talla);
+    } else {
+        productos = productoRepositorio.findAll();
+    }
+
+    // Convertir a DTO
+    List<ProductoDTO> productoDTOs = productos.stream()
+        .map(producto -> {
+            ProductoDTO dto = new ProductoDTO();
+            dto.setIdProducto(producto.getIdProducto());
+            dto.setNombre(producto.getNombre());
+            dto.setDescripcion(producto.getDescripcion());
+            dto.setPrecio(producto.getPrecio());
+            dto.setTalla(producto.getTalla());
+            dto.setColor(producto.getColor());
+            dto.setGenero(producto.getGenero());
+            return dto;
+        })
+        .collect(Collectors.toList());
+
+    return productoDTOs;
+}
+
+
+
+    
+    
 }

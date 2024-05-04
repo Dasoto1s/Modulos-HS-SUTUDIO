@@ -88,6 +88,10 @@ public class Inventario {
         this.admin = admin;
     }
 
+    public void setCantidad(Integer nuevaCantidad) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
  
 
 
