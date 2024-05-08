@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.hsstudio.TiendaOnline.Admin.entidad;
 
 import com.hsstudio.TiendaOnline.Cliente.entidad.CarritoCompras;
@@ -34,7 +30,7 @@ public class ProductoDTO {
     public ProductoDTO() {
         
     }
-  
+   
 
 
     public Integer getIdProducto() {
@@ -95,4 +91,3 @@ public class ProductoDTO {
 
     
 }
-
