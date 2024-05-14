@@ -27,6 +27,12 @@ public class CarritoComprasControlador {
     private final CarritoComprasRepositorio carritoComprasRepositorio;
     private final ProductoRepositorio productoRepositorio;
 
+    @Autowired
+    public CarritoComprasControlador(CarritoComprasRepositorio carritoComprasRepositorio, ProductoRepositorio productoRepositorio) {
+        this.carritoComprasRepositorio = carritoComprasRepositorio;
+        this.productoRepositorio = productoRepositorio;
+    }
+
     private String getCarritoIdFromCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
@@ -53,12 +59,7 @@ public class CarritoComprasControlador {
         response.addCookie(cookie);
     }
 
-    @Autowired
-    public CarritoComprasControlador(CarritoComprasRepositorio carritoComprasRepositorio, ProductoRepositorio productoRepositorio) {
-        this.carritoComprasRepositorio = carritoComprasRepositorio;
-        this.productoRepositorio = productoRepositorio;
-    }
-
+    
     // Obtener todos los carritos
     @GetMapping
     public List<CarritoCompras> obtenerTodosLosCarritos() {
@@ -105,13 +106,15 @@ public class CarritoComprasControlador {
 public CarritoComprasDTO agregarProducto(@RequestBody Integer idProducto, HttpServletRequest request, HttpServletResponse response) {
     // Leer la cookie del carrito
     String carritoId = getCarritoIdFromCookie(request);
+    
 
     // Si no existe un carrito en la cookie, crear uno nuevo
     if (carritoId == null) {
         carritoId = UUID.randomUUID().toString();
         setCarritoIdCookie(response, carritoId);
     }
-
+ // Guardar el valor de "carritoId" en la sesión
+    request.getSession().setAttribute("carritoId", carritoId);
     // Buscar el carrito en la base de datos
     CarritoCompras carrito = carritoComprasRepositorio.findBySessionId(carritoId);
     if (carrito == null) {
