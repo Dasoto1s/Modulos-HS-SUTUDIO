@@ -19,6 +19,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.UUID;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
+
 
 @RestController
 @RequestMapping("/carrito-compras")
@@ -46,19 +50,32 @@ public class CarritoComprasControlador {
     }
 
     private CarritoComprasDTO convertirACarritoComprasDTO(CarritoCompras carrito) {
-        List<ProductoDTO> productosDTO = carrito.getProductos().stream()
-            .map(producto -> new ProductoDTO(producto.getIdProducto(), producto.getNombre(), producto.getDescripcion(), producto.getPrecio(), producto.getTalla(), producto.getColor(), producto.getGenero()))
-            .collect(Collectors.toList());
+    List<ProductoDTO> productosDTO = carrito.getProductos().stream()
+        .map(producto -> new ProductoDTO(producto.getIdProducto(), producto.getNombre(), producto.getDescripcion(), producto.getPrecio(), producto.getTalla(), producto.getColor(), producto.getGenero(), producto.getTipoZapato(), producto.getImagen()))
+        .collect(Collectors.toList());
 
-        return new CarritoComprasDTO(carrito.getIdCarrito(), carrito.getNumeroProductos(), carrito.getPrecioTotal(), productosDTO);
-    }
+    return new CarritoComprasDTO(carrito.getIdCarrito(), carrito.getNumeroProductos(), carrito.getPrecioTotal(), productosDTO);
+}
+
 
     private void setCarritoIdCookie(HttpServletResponse response, String carritoId) {
         Cookie cookie = new Cookie("carritoId", carritoId);
         cookie.setMaxAge(24 * 60 * 60); // Establecer la duración de la cookie a 24 horas
         response.addCookie(cookie);
     }
+// ... (resto del código)
 
+class MensajeRespuesta {
+    private String mensaje;
+
+    public MensajeRespuesta(String mensaje) {
+        this.mensaje = mensaje;
+    }
+
+    public String getMensaje() {
+        return mensaje;
+    }
+}
     
     // Obtener todos los carritos
     @GetMapping
@@ -80,16 +97,24 @@ public class CarritoComprasControlador {
     }
 
     // Actualizar un carrito existente
-    @PutMapping("/{id}")
-    public CarritoCompras actualizarCarrito(@PathVariable Integer id, @RequestBody CarritoCompras carritoActualizado) {
-        return carritoComprasRepositorio.findById(id)
-                .map(carrito -> {
-                    carrito.setNumeroProductos(carritoActualizado.getNumeroProductos());
-                    carrito.setPrecioTotal(carritoActualizado.getPrecioTotal());
-                    
-                    return carritoComprasRepositorio.save(carrito);
-                })
-                .orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
+   @PutMapping("/{id}")
+    public ResponseEntity<?> actualizarCarrito(@PathVariable Integer id, @RequestBody MultiValueMap<String, String> carritoActualizado) {
+        Optional<CarritoCompras> optionalCarrito = carritoComprasRepositorio.findById(id);
+        if (optionalCarrito.isPresent()) {
+            CarritoCompras carrito = optionalCarrito.get();
+            String numeroProductos = carritoActualizado.getFirst("numeroProductos");
+            if (numeroProductos != null) {
+                carrito.setNumeroProductos(Integer.parseInt(numeroProductos));
+            }
+            String precioTotal = carritoActualizado.getFirst("precioTotal");
+            if (precioTotal != null) {
+                carrito.setPrecioTotal(Float.parseFloat(precioTotal));
+            }
+            carritoComprasRepositorio.save(carrito);
+            return ResponseEntity.ok("Carrito actualizado correctamente");
+        } else {
+            throw new RuntimeException("Carrito no encontrado");
+        }
     }
 
     // Eliminar un carrito
@@ -103,33 +128,36 @@ public class CarritoComprasControlador {
     }
     
 @PostMapping("/agregar-producto")
-public CarritoComprasDTO agregarProducto(@RequestBody Integer idProducto, HttpServletRequest request, HttpServletResponse response) {
+public ResponseEntity<Object> agregarProducto(@RequestBody Integer idProducto, HttpServletRequest request, HttpServletResponse response) {
     // Leer la cookie del carrito
     String carritoId = getCarritoIdFromCookie(request);
-    
 
     // Si no existe un carrito en la cookie, crear uno nuevo
     if (carritoId == null) {
         carritoId = UUID.randomUUID().toString();
         setCarritoIdCookie(response, carritoId);
     }
- // Guardar el valor de "carritoId" en la sesión
+
+    // Guardar el valor de "carritoId" en la sesión
     request.getSession().setAttribute("carritoId", carritoId);
+
     // Buscar el carrito en la base de datos
     CarritoCompras carrito = carritoComprasRepositorio.findBySessionId(carritoId);
+
     if (carrito == null) {
-        carrito = new CarritoCompras();
-        carrito.setSessionId(carritoId); 
+        // Si no existe el carrito, enviar un mensaje de error
+        String mensaje = "No se encontró el carrito de compras. Por favor, inténtelo de nuevo.";
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MensajeRespuesta(mensaje));
     }
 
     // Buscar el producto completo en la base de datos
     Producto producto = productoRepositorio.findById(idProducto)
-        .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+            .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
     // Agregar el producto al carrito
     carrito.getProductos().add(producto);
 
-    // Actualizar el número  de productos y el precio total
+    // Actualizar el número de productos y el precio total
     carrito.setNumeroProductos(carrito.getProductos().size());
     carrito.setPrecioTotal(carrito.getProductos().stream().map(Producto::getPrecio).reduce(0f, Float::sum));
 
@@ -139,7 +167,7 @@ public CarritoComprasDTO agregarProducto(@RequestBody Integer idProducto, HttpSe
     // Convertir a DTO
     CarritoComprasDTO carritoDTO = convertirACarritoComprasDTO(carrito);
 
-    return carritoDTO;
+    return ResponseEntity.ok(carritoDTO);
 }
 
 

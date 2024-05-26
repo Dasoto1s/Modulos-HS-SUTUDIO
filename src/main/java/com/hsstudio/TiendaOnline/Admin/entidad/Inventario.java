@@ -1,44 +1,35 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.hsstudio.TiendaOnline.Admin.entidad;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 
 @Entity
 public class Inventario {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id_inventario1")
     private Integer idInventario;
 
     private Float cantidad;
+
     private Integer stock;
+
     private Integer Cantidad_minima_requerida;
-    
-     @OneToOne(mappedBy = "inventario")
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "Id_administrador1")
     private Admin admin;
-    
 
     @OneToOne
     @JoinColumn(name = "Id_Producto5")
     @JsonBackReference
     private Producto producto;
-    
-    
-    
+
     public Inventario() {
-}
+    }
 
     public Integer getIdInventario() {
         return idInventario;
@@ -89,14 +80,6 @@ public class Inventario {
     }
 
     public void setCantidad(Integer nuevaCantidad) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        this.cantidad = (float) nuevaCantidad;
     }
-
- 
-
-
-   
-  
-
-  
 }

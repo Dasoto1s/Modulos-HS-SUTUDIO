@@ -1,30 +1,16 @@
 package com.hsstudio.TiendaOnline.Admin.entidad;
 
-
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.hsstudio.TiendaOnline.Cliente.entidad.CarritoCompras;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.Serializable;
 import java.util.Objects;
 
-
-
-  
 @Entity
-public class Producto implements Serializable  {
+public class Producto implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id_Producto")
@@ -32,25 +18,35 @@ public class Producto implements Serializable  {
 
     @Column(name = "nombre")
     private String nombre;
+
     private String descripcion;
+
     private float precio;
+
     private int talla;
+
     private String color;
+
     private String genero;
-    
+
+    @Lob
+    @Column(name = "imagen")
+    private byte[] imagen;
+
+    @Column(name = "tipo_zapato")
+    private String tipoZapato;
+
     @OneToOne(mappedBy = "producto", cascade = CascadeType.ALL)
     @JsonManagedReference
     private Inventario inventario;
-    
-@ManyToMany(mappedBy = "productos")
-private List<CarritoCompras> carritos = new ArrayList<>();
 
-   
+    @ManyToMany(mappedBy = "productos")
+    private List<CarritoCompras> carritos = new ArrayList<>();
 
     public Producto() {
     }
 
-    public Producto(Integer idProducto, String nombre, String descripcion, float precio, int talla, String color, String genero, Inventario inventario) {
+    public Producto(Integer idProducto, String nombre, String descripcion, float precio, int talla, String color, String genero, byte[] imagen, String tipoZapato, Inventario inventario) {
         this.idProducto = idProducto;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -58,25 +54,12 @@ private List<CarritoCompras> carritos = new ArrayList<>();
         this.talla = talla;
         this.color = color;
         this.genero = genero;
+        this.imagen = imagen;
+        this.tipoZapato = tipoZapato;
         this.inventario = inventario;
     }
 
-
-    @Override
-public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Producto producto = (Producto) o;
-    return idProducto.equals(producto.idProducto);
-}
-
-@Override
-public int hashCode() {
-    return Objects.hash(idProducto);
-}
-
-   
-    
+    // getters y setters
 
     public Integer getIdProducto() {
         return idProducto;
@@ -134,6 +117,22 @@ public int hashCode() {
         this.genero = genero;
     }
 
+    public byte[] getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(byte[] imagen) {
+        this.imagen = imagen;
+    }
+
+    public String getTipoZapato() {
+        return tipoZapato;
+    }
+
+    public void setTipoZapato(String tipoZapato) {
+        this.tipoZapato = tipoZapato;
+    }
+
     public Inventario getInventario() {
         return inventario;
     }
@@ -142,8 +141,5 @@ public int hashCode() {
         this.inventario = inventario;
     }
 
-  
-    
-    
-    
+    // otros métodos
 }

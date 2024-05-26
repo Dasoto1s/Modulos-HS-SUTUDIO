@@ -11,6 +11,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,22 +45,29 @@ public class CarritoCompras implements Serializable{
 private List<Producto> productos = new ArrayList<>();
 
     
-    
+       @OneToMany(mappedBy = "carritoCompras")
+    private List<Pedido> pedidos = new ArrayList<>();
     
 
     
     @Column(name = "session_id")
     private String sessionId;
     
+   
+    
     
     public CarritoCompras() {
     }
 
-    public CarritoCompras(Integer idCarrito, Integer numeroProductos, Float precioTotal) {
+    public CarritoCompras(Integer idCarrito, Integer numeroProductos, Float precioTotal, String sessionId, Cliente cliente) {
         this.idCarrito = idCarrito;
         this.numeroProductos = numeroProductos;
         this.precioTotal = precioTotal;
+        this.sessionId = sessionId;
+       
     }
+
+   
     
     
      public String getSessionId() {
@@ -98,6 +107,16 @@ public List<Producto> getProductos() {
     public void setPrecioTotal(Float precioTotal) {
         this.precioTotal = precioTotal;
     }
+
+    public List<Pedido> getPedidos() {
+        return pedidos;
+    }
+
+    public void setPedidos(List<Pedido> pedidos) {
+        this.pedidos = pedidos;
+    }
+
+   
 
    
    

@@ -3,6 +3,7 @@ package com.hsstudio.TiendaOnline.Cliente.entidad;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -23,6 +24,8 @@ public class Cliente {
 
     @Column(name = "metodoPago")
     private String metodoPago;
+    
+  
 
     // Getters y setters
 
@@ -65,5 +68,7 @@ public class Cliente {
     public void setMetodoPago(String metodoPago) {
         this.metodoPago = metodoPago;
     }
+
+  
     
 }

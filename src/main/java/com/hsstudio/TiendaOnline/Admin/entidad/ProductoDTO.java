@@ -1,13 +1,5 @@
 package com.hsstudio.TiendaOnline.Admin.entidad;
 
-import com.hsstudio.TiendaOnline.Cliente.entidad.CarritoCompras;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-
-/**
- *
- * @author alexa
- */
 public class ProductoDTO {
     private Integer idProducto;
     private String nombre;
@@ -16,8 +8,11 @@ public class ProductoDTO {
     private int talla;
     private String color;
     private String genero;
+    private String tipoZapato; 
 
-    public ProductoDTO(Integer idProducto, String nombre, String descripcion, float precio, int talla, String color, String genero) {
+    private byte[] imagen;
+
+    public ProductoDTO(Integer idProducto, String nombre, String descripcion, float precio, int talla, String color, String genero, String tipoZapato, byte[] imagen) {
         this.idProducto = idProducto;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -25,13 +20,12 @@ public class ProductoDTO {
         this.talla = talla;
         this.color = color;
         this.genero = genero;
+        this.tipoZapato = tipoZapato;
+        this.imagen = imagen;
     }
-    
-    public ProductoDTO() {
-        
-    }
-   
 
+    public ProductoDTO() {
+    }
 
     public Integer getIdProducto() {
         return idProducto;
@@ -89,5 +83,19 @@ public class ProductoDTO {
         this.genero = genero;
     }
 
-    
+    public String getTipoZapato() {
+        return tipoZapato;
+    }
+
+    public void setTipoZapato(String tipoZapato) {
+        this.tipoZapato = tipoZapato;
+    }
+
+    public byte[] getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(byte[] imagen) {
+        this.imagen = imagen;
+    }
 }

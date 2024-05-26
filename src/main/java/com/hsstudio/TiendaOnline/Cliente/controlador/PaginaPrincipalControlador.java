@@ -29,105 +29,101 @@ public class PaginaPrincipalControlador {
     public PaginaPrincipalControlador(ProductoRepositorio productoRepositorio) {
         this.productoRepositorio = productoRepositorio;
     }
-        @Autowired
-        private DestacadosRepositorio destacadosRepositorio;
 
-        @Autowired
-        private PromocionesRepositorio promocionesRepositorio;
+    @Autowired
+    private DestacadosRepositorio destacadosRepositorio;
 
+    @Autowired
+    private PromocionesRepositorio promocionesRepositorio;
 
     // Obtener productos por género
-   @GetMapping("/productos/{genero}")
-public List<ProductoDTO> obtenerProductosPorGenero(@PathVariable String genero) {
-    List<Producto> productos = productoRepositorio.findByGenero(genero);
+    @GetMapping("/productos/{genero}")
+    public List<ProductoDTO> obtenerProductosPorGenero(@PathVariable String genero) {
+        List<Producto> productos = productoRepositorio.findByGenero(genero);
 
-    // Convertir a DTO
-    List<ProductoDTO> productoDTOs = productos.stream()
-        .map(producto -> {
-            ProductoDTO dto = new ProductoDTO();
-            dto.setIdProducto(producto.getIdProducto());
-            dto.setNombre(producto.getNombre());
-            dto.setDescripcion(producto.getDescripcion());
-            dto.setPrecio(producto.getPrecio());
-            dto.setTalla(producto.getTalla());
-            dto.setColor(producto.getColor());
-            dto.setGenero(producto.getGenero());
-            return dto;
-        })
-        .collect(Collectors.toList());
+        // Convertir a DTO
+        List<ProductoDTO> productoDTOs = convertirAProductoDTO(productos);
 
-    return productoDTOs;
-}
-// Obtener todos los productos
-@GetMapping("/productos")
-public List<ProductoDTO> obtenerTodosLosProductos() {
-    List<Producto> productos = productoRepositorio.findAll();
+        return productoDTOs;
+    }
 
-    // Convertir a DTO
-    List<ProductoDTO> productoDTOs = convertirAProductoDTO(productos);
+    // Obtener los productos por subcategoria
+    @GetMapping("/productos/{genero}/{tipoZapato}")
+    public List<ProductoDTO> obtenerProductosPorSubcategoria(
+            @PathVariable String genero,
+            @PathVariable String tipoZapato) {
+        // Realizar la búsqueda de productos por género y subcategoría
+        List<Producto> productos = productoRepositorio.findByGeneroAndTipoZapato(genero, tipoZapato);
 
-    return productoDTOs;
-}
+        // Convertir a DTO
+        List<ProductoDTO> productoDTOs = convertirAProductoDTO(productos);
 
-// Obtener un producto por su ID con todos sus detalles
-@GetMapping("/producto/{id}")
-public ProductoDTO obtenerProductoPorId(@PathVariable Integer id) {
-    Producto producto = productoRepositorio.findById(id)
-        .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        return productoDTOs;
+    }
 
-    // Convertir a DTO
-    ProductoDTO productoDTO = new ProductoDTO();
-    productoDTO.setIdProducto(producto.getIdProducto());
-    productoDTO.setNombre(producto.getNombre());
-    productoDTO.setDescripcion(producto.getDescripcion());
-    productoDTO.setPrecio(producto.getPrecio());
-    productoDTO.setTalla(producto.getTalla());
-    productoDTO.setColor(producto.getColor());
-    productoDTO.setGenero(producto.getGenero());
+    // Obtener todos los productos
+    @GetMapping("/productos")
+    public List<ProductoDTO> obtenerTodosLosProductos() {
+        List<Producto> productos = productoRepositorio.findAll();
 
-    return productoDTO;
-}
+        // Convertir a DTO
+        List<ProductoDTO> productoDTOs = convertirAProductoDTO(productos);
 
+        return productoDTOs;
+    }
 
-@GetMapping("/productos/destacados")
-public List<ProductoDTO> obtenerProductosDestacados() {
-    List<Producto> productos = destacadosRepositorio.findAll().stream()
-        .map(Destacados::getProducto)
-        .collect(Collectors.toList());
+    // Obtener un producto por su ID con todos sus detalles
+    @GetMapping("/producto/{id}")
+    public ProductoDTO obtenerProductoPorId(@PathVariable Integer id) {
+        Producto producto = productoRepositorio.findById(id)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
-    // Convertir a DTO
-    List<ProductoDTO> productoDTOs = convertirAProductoDTO(productos);
+        // Convertir a DTO
+        ProductoDTO productoDTO = convertirAProductoDTO(producto);
 
-    return productoDTOs;
-}
+        return productoDTO;
+    }
 
-@GetMapping("/productos/promociones")
-public List<ProductoDTO> obtenerProductosEnPromocion() {
-    List<Producto> productos = promocionesRepositorio.findAll().stream()
-        .map(Promociones::getProducto)
-        .collect(Collectors.toList());
+    @GetMapping("/productos/destacados")
+    public List<ProductoDTO> obtenerProductosDestacados() {
+        List<Producto> productos = destacadosRepositorio.findAll().stream()
+                .map(Destacados::getProducto)
+                .collect(Collectors.toList());
 
-    // Convertir a DTO
-    List<ProductoDTO> productoDTOs = convertirAProductoDTO(productos);
+        // Convertir a DTO
+        List<ProductoDTO> productoDTOs = convertirAProductoDTO(productos);
 
-    return productoDTOs;
-}
+        return productoDTOs;
+    }
 
+    @GetMapping("/productos/promociones")
+    public List<ProductoDTO> obtenerProductosEnPromocion() {
+        List<Producto> productos = promocionesRepositorio.findAll().stream()
+                .map(Promociones::getProducto)
+                .collect(Collectors.toList());
 
-private List<ProductoDTO> convertirAProductoDTO(List<Producto> productos) {
-    return productos.stream()
-        .map(producto -> {
-            ProductoDTO dto = new ProductoDTO();
-            dto.setIdProducto(producto.getIdProducto());
-            dto.setNombre(producto.getNombre());
-            dto.setDescripcion(producto.getDescripcion());
-            dto.setPrecio(producto.getPrecio());
-            dto.setTalla(producto.getTalla());
-            dto.setColor(producto.getColor());
-            dto.setGenero(producto.getGenero());
-            return dto;
-        })
-        .collect(Collectors.toList());
-}
+        // Convertir a DTO
+        List<ProductoDTO> productoDTOs = convertirAProductoDTO(productos);
 
+        return productoDTOs;
+    }
+
+    private List<ProductoDTO> convertirAProductoDTO(List<Producto> productos) {
+        return productos.stream()
+                .map(this::convertirAProductoDTO)
+                .collect(Collectors.toList());
+    }
+
+    private ProductoDTO convertirAProductoDTO(Producto producto) {
+        ProductoDTO dto = new ProductoDTO();
+        dto.setIdProducto(producto.getIdProducto());
+        dto.setNombre(producto.getNombre());
+        dto.setDescripcion(producto.getDescripcion());
+        dto.setPrecio(producto.getPrecio());
+        dto.setTalla(producto.getTalla());
+        dto.setColor(producto.getColor());
+        dto.setGenero(producto.getGenero());
+        dto.setTipoZapato(producto.getTipoZapato()); // Incluir la propiedad tipoZapato
+        return dto;
+    }
 }

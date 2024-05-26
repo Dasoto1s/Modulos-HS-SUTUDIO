@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 
 @Entity
 public class Banner {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "Id_publicidad")
     private Integer id;
 
     @Lob
@@ -17,12 +19,19 @@ public class Banner {
     @Lob
     private byte[] imagen3;
 
-    public Banner(Integer id, byte[] imagen1, byte[] imagen2, byte[] imagen3) {
+    @OneToOne
+    @JoinColumn(name = "Id_administrador2")
+    private Admin admin;
+
+    public Banner(Integer id, byte[] imagen1, byte[] imagen2, byte[] imagen3, Admin admin) {
         this.id = id;
         this.imagen1 = imagen1;
         this.imagen2 = imagen2;
         this.imagen3 = imagen3;
+        this.admin = admin;
     }
+
+   
 
     public Banner() {
         
@@ -58,6 +67,14 @@ public class Banner {
 
     public void setImagen3(byte[] imagen3) {
         this.imagen3 = imagen3;
+    }
+
+    public Admin getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Admin admin) {
+        this.admin = admin;
     }
 
     

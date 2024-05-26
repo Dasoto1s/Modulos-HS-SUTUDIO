@@ -1,15 +1,13 @@
 package com.hsstudio.TiendaOnline.Admin.entidad;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hsstudio.TiendaOnline.Cliente.entidad.Pedido;
+import jakarta.persistence.*;
+import java.util.List;
 
 @Entity(name = "administrador")
 public class Admin {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id_administrador")
@@ -20,21 +18,35 @@ public class Admin {
 
     @Column(name = "contraseña")
     private String password;
-    
-    @OneToOne
-    @JoinColumn(name = "Id_inventario7")
-    private Inventario inventario;
-        
-    public Admin() {
-        }
 
-    public Admin(Integer id, String email, String password) {
+    @JsonIgnore
+    @OneToMany(mappedBy = "admin")
+    private List<Inventario> inventarios;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "admin")
+    private List<Pedido> pedidos;
+
+    @OneToOne(mappedBy = "admin")
+    private Banner banner;
+
+    // Constructor sin parámetros
+    public Admin() {
+    }
+
+    // Constructor con parámetros
+
+    public Admin(Integer id, String email, String password, List<Inventario> inventarios, List<Pedido> pedidos, Banner banner) {
         this.id = id;
         this.email = email;
         this.password = password;
-        this.inventario = inventario;
+        this.inventarios = inventarios;
+        this.pedidos = pedidos;
+        this.banner = banner;
     }
+   
 
+    // Getters y Setters
     public Integer getId() {
         return id;
     }
@@ -59,13 +71,28 @@ public class Admin {
         this.password = password;
     }
 
-    public Inventario getInventario() {
-        return inventario;
+    public List<Inventario> getInventarios() {
+        return inventarios;
     }
 
-    public void setInventario(Inventario inventario) {
-        this.inventario = inventario;
+    public void setInventarios(List<Inventario> inventarios) {
+        this.inventarios = inventarios;
     }
 
+    public List<Pedido> getPedidos() {
+        return pedidos;
+    }
+
+    public void setPedidos(List<Pedido> pedidos) {
+        this.pedidos = pedidos;
+    }
+
+    public Banner getBanner() {
+        return banner;
+    }
+
+    public void setBanner(Banner banner) {
+        this.banner = banner;
+    }
     
 }
