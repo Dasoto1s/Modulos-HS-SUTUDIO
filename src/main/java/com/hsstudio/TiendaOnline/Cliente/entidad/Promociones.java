@@ -1,9 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.hsstudio.TiendaOnline.Cliente.entidad;
-
 import com.hsstudio.TiendaOnline.Admin.entidad.Producto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,6 +7,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import java.math.BigDecimal;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 public class Promociones {
@@ -21,20 +18,27 @@ public class Promociones {
 
     @OneToOne
     @JoinColumn(name = "producto_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Producto producto;
 
+    @JoinColumn(name = "descuento")
     private BigDecimal descuento;
+
+
+
+    // Constructores
+
+    public Promociones() {
+    }
 
     public Promociones(Integer id, Producto producto, BigDecimal descuento) {
         this.id = id;
         this.producto = producto;
         this.descuento = descuento;
+      
     }
-    
-      public Promociones() {
-        
-    }
-    
+
+    // Getters y setters
 
     public Integer getId() {
         return id;
@@ -60,5 +64,5 @@ public class Promociones {
         this.descuento = descuento;
     }
 
-    
+
 }

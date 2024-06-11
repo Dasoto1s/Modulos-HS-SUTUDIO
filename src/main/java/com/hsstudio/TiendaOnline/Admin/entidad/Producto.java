@@ -1,5 +1,6 @@
 package com.hsstudio.TiendaOnline.Admin.entidad;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.hsstudio.TiendaOnline.Cliente.entidad.CarritoCompras;
 import jakarta.persistence.*;
@@ -10,6 +11,10 @@ import java.util.Objects;
 
 @Entity
 public class Producto implements Serializable {
+
+    public static void setCarritos(Object object) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,12 +41,13 @@ public class Producto implements Serializable {
     @Column(name = "tipo_zapato")
     private String tipoZapato;
 
-    @OneToOne(mappedBy = "producto", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private Inventario inventario;
+@OneToOne(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+@JsonIgnore
+private Inventario inventario;
 
-    @ManyToMany(mappedBy = "productos")
-    private List<CarritoCompras> carritos = new ArrayList<>();
+@ManyToMany(mappedBy = "productos", cascade = CascadeType.ALL)
+@JsonIgnore
+private List<CarritoCompras> carritos = new ArrayList<>();
 
     public Producto() {
     }
@@ -140,6 +146,10 @@ public class Producto implements Serializable {
     public void setInventario(Inventario inventario) {
         this.inventario = inventario;
     }
-
-    // otros métodos
+    public List<CarritoCompras> getCarritos() {
+        return carritos;
+    }
+   public void setCarritos(List<CarritoCompras> carritos) {
+    this.carritos = carritos;
+}
 }

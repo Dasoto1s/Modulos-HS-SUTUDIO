@@ -50,7 +50,6 @@ public Cliente crearCliente(@RequestBody Cliente nuevoCliente, HttpServletReques
 
         // Guardar el nuevo cliente en la base de datos
         Cliente clienteGuardado = clienteRepositorio.save(nuevoCliente);
-
         return clienteGuardado;
     }
 

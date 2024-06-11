@@ -34,12 +34,9 @@ public class DestacadosControlador {
 
     // Obtener productos destacados
  @GetMapping
- public List<Producto> obtenerProductosDestacados() {
-     List<Destacados> productosDestacados = destacadosRepositorio.findAll();
-     return productosDestacados.stream()
-             .map(Destacados::getProducto) // Extraer los productos de la lista de destacados
-             .collect(Collectors.toList());
- }
+public List<Destacados> obtenerProductosDestacados() {
+    return destacadosRepositorio.findAll();
+}
 
 
     // Agregar un producto a la lista de destacados
@@ -60,7 +57,7 @@ public class DestacadosControlador {
         }
     }
 
-    // Eliminar un producto de la lista de destacados
+  
    // Eliminar un producto de la lista de destacados
 @DeleteMapping("/{destacadoId}")
 public ResponseEntity<String> eliminarProductoDestacado(@PathVariable Integer destacadoId) {

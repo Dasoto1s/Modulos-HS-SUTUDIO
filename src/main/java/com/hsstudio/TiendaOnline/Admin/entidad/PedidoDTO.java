@@ -18,8 +18,9 @@ public class PedidoDTO {
     private String correoCliente;
     private Integer telefonoCliente;
     private String metodoPagoCliente;
+    private String Estado_solicitud;
 
-    public PedidoDTO(Integer numeroPedido, String direccionEnvio, Date fechaPedido, String departamento, String ciudad, Integer numeroProductos, Float precioTotal, List<Producto> productos, String nombreCliente, String correoCliente, Integer telefonoCliente, String metodoPagoCliente) {
+    public PedidoDTO(Integer numeroPedido, String direccionEnvio, Date fechaPedido, String departamento, String ciudad, Integer numeroProductos, Float precioTotal, List<Producto> productos, String nombreCliente, String correoCliente, Integer telefonoCliente, String metodoPagoCliente, String Estado_solicitud) {
         this.numeroPedido = numeroPedido;
         this.direccionEnvio = direccionEnvio;
         this.fechaPedido = fechaPedido;
@@ -32,7 +33,10 @@ public class PedidoDTO {
         this.correoCliente = correoCliente;
         this.telefonoCliente = telefonoCliente;
         this.metodoPagoCliente = metodoPagoCliente;
+        this.Estado_solicitud = Estado_solicitud;
     }
+
+ 
       public PedidoDTO() {
         
     }
@@ -131,6 +135,14 @@ public class PedidoDTO {
 
     public void setMetodoPagoCliente(String metodoPagoCliente) {
         this.metodoPagoCliente = metodoPagoCliente;
+    }
+
+    public String getEstado_solicitud() {
+        return Estado_solicitud;
+    }
+
+    public void setEstado_solicitud(String Estado_solicitud) {
+        this.Estado_solicitud = Estado_solicitud;
     }
 
     

@@ -11,6 +11,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 public class Destacados {
@@ -19,8 +21,9 @@ public class Destacados {
     private Integer id;
 
     @OneToOne
-    @JoinColumn(name = "producto_id")
-    private Producto producto;
+@JoinColumn(name = "producto_id")
+@OnDelete(action = OnDeleteAction.CASCADE)
+private Producto producto;
 
     public Destacados(Integer id, Producto producto) {
         this.id = id;

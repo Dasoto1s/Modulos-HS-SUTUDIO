@@ -21,6 +21,7 @@ import java.net.URI;
 import java.util.Date;
 import java.util.List;
 import com.paypal.api.payments.Links;
+import org.hibernate.Hibernate;
 
 @RestController
 @RequestMapping("/pedidos")
@@ -52,7 +53,7 @@ public class PedidoControlador {
         return null;
     }
 
-    @PostMapping("/crear-pedido")
+ @PostMapping("/crear-pedido")
     public ResponseEntity<Void> crearPedido(@RequestParam String direccionEnvio,
                                             @RequestParam String departamento,
                                             @RequestParam String ciudad,
@@ -63,7 +64,8 @@ public class PedidoControlador {
 
         if (carritoId != null) {
             // Buscar el carrito de compras en la base de datos por el campo session_id
-            CarritoCompras carrito = carritoComprasRepositorio.findBySessionId(carritoId);
+           CarritoCompras carrito = carritoComprasRepositorio.findBySessionId(carritoId);
+             Hibernate.initialize(carrito.getProductos());
 
             if (carrito != null) {
                 // Crear un nuevo objeto Pedido

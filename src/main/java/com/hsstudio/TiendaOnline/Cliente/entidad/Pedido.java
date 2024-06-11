@@ -1,5 +1,6 @@
 package com.hsstudio.TiendaOnline.Cliente.entidad;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hsstudio.TiendaOnline.Admin.entidad.Admin;
 import jakarta.persistence.*;
 
@@ -36,11 +37,14 @@ public class Pedido {
     @OneToOne(mappedBy = "pedido")
     private Transaccion transaccion;
     
+    @Column(name = "Estado_solicitud_bool")
+    private String Estado_solicitud;
+    
     
 
     // Constructor, getters y setters
 
-    public Pedido(Integer numeroPedido, String direccionEnvio, Date fechaPedido, CarritoCompras carritoCompras, Admin admin, String departamento, String ciudad, Transaccion transaccion) {
+    public Pedido(Integer numeroPedido, String direccionEnvio, Date fechaPedido, CarritoCompras carritoCompras, Admin admin, String departamento, String ciudad, Transaccion transaccion, String Estado_solicitud) {
         this.numeroPedido = numeroPedido;
         this.direccionEnvio = direccionEnvio;
         this.fechaPedido = fechaPedido;
@@ -49,8 +53,10 @@ public class Pedido {
         this.departamento = departamento;
         this.ciudad = ciudad;
         this.transaccion = transaccion;
+        this.Estado_solicitud = Estado_solicitud;
     }
 
+   
     
 
  
@@ -112,6 +118,14 @@ public class Pedido {
 
     public void setCiudad(String ciudad) {
         this.ciudad = ciudad;
+    }
+
+    public String getEstado_solicitud() {
+        return Estado_solicitud;
+    }
+
+    public void setEstado_solicitud(String Estado_solicitud) {
+        this.Estado_solicitud = Estado_solicitud;
     }
 
     public Transaccion getTransaccion() {
