@@ -39,20 +39,21 @@ public class PedidoAdminControlador {
         return convertirAPedidoDTO(pedido);
     }
 
-    private PedidoDTO convertirAPedidoDTO(Pedido pedido) {
-        PedidoDTO pedidoDTO = new PedidoDTO();
-        pedidoDTO.setNumeroPedido(pedido.getNumeroPedido());
-        pedidoDTO.setDireccionEnvio(pedido.getDireccionEnvio());
-        pedidoDTO.setFechaPedido(pedido.getFechaPedido());
-        pedidoDTO.setDepartamento(pedido.getDepartamento());
-        pedidoDTO.setCiudad(pedido.getCiudad());
-        pedidoDTO.setEstado_solicitud(pedido.getEstado_solicitud());
-
-        CarritoCompras carritoCompras = pedido.getCarritoCompras();
+   private PedidoDTO convertirAPedidoDTO(Pedido pedido) {
+    PedidoDTO pedidoDTO = new PedidoDTO();
+    pedidoDTO.setNumeroPedido(pedido.getNumeroPedido());
+    pedidoDTO.setDireccionEnvio(pedido.getDireccionEnvio());
+    pedidoDTO.setFechaPedido(pedido.getFechaPedido());
+    pedidoDTO.setDepartamento(pedido.getDepartamento());
+    pedidoDTO.setCiudad(pedido.getCiudad());
+    pedidoDTO.setEstado_solicitud(pedido.getEstado_solicitud());
+    
+    CarritoCompras carritoCompras = pedido.getCarritoCompras();
+    if (carritoCompras != null) {
         pedidoDTO.setNumeroProductos(carritoCompras.getNumeroProductos());
         pedidoDTO.setPrecioTotal(carritoCompras.getPrecioTotal());
         pedidoDTO.setProductos(carritoCompras.getProductos());
-
+        
         // Obtener la información del cliente utilizando el session_id
         String sessionId = carritoCompras.getSessionId();
         Cliente cliente = clienteRepositorio.findBySessionId(sessionId);
@@ -60,11 +61,11 @@ public class PedidoAdminControlador {
             pedidoDTO.setNombreCliente(cliente.getNombre());
             pedidoDTO.setCorreoCliente(cliente.getCorreo());
             pedidoDTO.setTelefonoCliente(cliente.getTelefono());
-            pedidoDTO.setMetodoPagoCliente(cliente.getMetodoPago());
         }
-
-        return pedidoDTO;
     }
+    
+    return pedidoDTO;
+}
 @PutMapping("/{id}")
 public ResponseEntity<?> actualizarEstadoPedido(@PathVariable Integer id, @RequestBody String nuevoEstado) {
     Pedido pedido = pedidoRepositorio.findById(id)

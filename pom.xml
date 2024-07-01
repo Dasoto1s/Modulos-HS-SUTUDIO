@@ -11,12 +11,14 @@
 	<groupId>com.hs-studio</groupId>
 	<artifactId>TiendaOnline</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>TiendaOnline</name>
 	<description>TiendaOnline</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
+        
+        
         
         
                 
@@ -86,11 +88,7 @@
               
 
                 
-             <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.26</version>
-             </dependency>
+           
 
 
 		<dependency>
@@ -115,7 +113,17 @@
 	                <version>3.2.5</version>
 	        </dependency>
                 
-   
+                
+                    <dependency>
+        <groupId>org.imgscalr</groupId>
+        <artifactId>imgscalr-lib</artifactId>
+        <version>4.2</version>
+    </dependency>
+                
+   <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-logging</artifactId>
+</dependency>
 	 
 	 
 	 <dependency>
@@ -144,7 +152,9 @@
     <artifactId>java-jwt</artifactId>
     <version>4.2.1</version>
 </dependency>
-
+	
+        
+        
 	</dependencies>
       
         
@@ -154,10 +164,11 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
+                                        <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>3.2.5</version>
+</plugin>
 		</plugins>
 	</build>
         

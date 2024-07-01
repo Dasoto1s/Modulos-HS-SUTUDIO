@@ -12,10 +12,9 @@ public class Transaccion {
     @Column(name = "ID_transaccion")
     private Integer idTransaccion;
     
-
-    @OneToOne
-    @PrimaryKeyJoinColumn(name = "id_pedido")
-    private Pedido pedido;
+    @OneToOne(optional = false)
+@JoinColumn(name = "ID_pedido", nullable = false)
+private Pedido pedido;
 
     @Column(name = "Monto_total")
     private Double montoTotal;

@@ -35,7 +35,7 @@ public class Producto implements Serializable {
     private String genero;
 
     @Lob
-    @Column(name = "imagen")
+   @Column(name = "imagen", columnDefinition = "MEDIUMBLOB")
     private byte[] imagen;
 
     @Column(name = "tipo_zapato")

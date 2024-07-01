@@ -3,9 +3,8 @@ package com.hsstudio.TiendaOnline.Cliente.entidad;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.math.BigInteger;
 
 @Entity
 @Table(name = "cliente")
@@ -13,22 +12,25 @@ public class Cliente {
     @Id
     @Column(name = "id_cliente")
     private String idCliente;
-
-    @Column(name = "Nombre")
+    @Column(name = "nombre")
     private String nombre;
-
     @Column(name = "Correo")
     private String correo;
-
     @Column(name = "Telefono")
-    private Integer telefono;
+    private BigInteger telefono;
 
-    @Column(name = "metodoPago")
-    private String metodoPago;
-    
+    public Cliente() {
+        // Constructor vacío requerido por JPA
+    }
+
+    public Cliente(String idCliente, String nombre, String correo, BigInteger telefono) {
+        this.idCliente = idCliente;
+        this.nombre = nombre;
+        this.correo = correo;
+        this.telefono = telefono;
+    }
 
     // Getters y setters
-
     public String getIdCliente() {
         return idCliente;
     }
@@ -53,23 +55,11 @@ public class Cliente {
         this.correo = correo;
     }
 
-    public Integer getTelefono() {
+    public BigInteger getTelefono() {
         return telefono;
     }
 
-    public void setTelefono(Integer telefono) {
+    public void setTelefono(BigInteger telefono) {
         this.telefono = telefono;
     }
-
-    public String getMetodoPago() {
-        return metodoPago;
-    }
-
-    public void setMetodoPago(String metodoPago) {
-        this.metodoPago = metodoPago;
-    }
-
-
-  
-    
 }

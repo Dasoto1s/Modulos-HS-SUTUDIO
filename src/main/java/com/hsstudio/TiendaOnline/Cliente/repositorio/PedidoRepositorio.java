@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PedidoRepositorio extends JpaRepository<Pedido, Integer> {
     void deleteByCarritoCompras(CarritoCompras carritoCompras);
+    Pedido findByCarritoCompras(CarritoCompras carritoCompras);
 }

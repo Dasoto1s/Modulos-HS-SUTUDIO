@@ -62,7 +62,7 @@
             this.secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
         }
 
-        private Integer extraerAdminIdDesdeToken(String authorizationHeader) {
+        protected  Integer extraerAdminIdDesdeToken(String authorizationHeader) {
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 String token = authorizationHeader.substring(7);
                 DecodedJWT decodedJWT = JWT.decode(token);
@@ -106,7 +106,9 @@
         return productoDTOs;
     }
 
+ 
         //crear producto
+    
       @PostMapping
         public ResponseEntity<Object> crearProducto(
                 @RequestHeader("Authorization") String authorizationHeader,

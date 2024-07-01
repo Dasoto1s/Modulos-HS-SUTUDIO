@@ -5,8 +5,10 @@ import com.hsstudio.TiendaOnline.Cliente.entidad.SolicitudCambioDevolucion;
 import com.hsstudio.TiendaOnline.Cliente.repositorio.PedidoRepositorio;
 import com.hsstudio.TiendaOnline.Cliente.repositorio.SolicitudCambioDevolucionRepositorio;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,24 +30,56 @@ public class SolicitudCambioDevolucionControlador {
         this.solicitudRepositorio = solicitudRepositorio;
         this.pedidoRepositorio = pedidoRepositorio;
     }
+@PostMapping
+public ResponseEntity<?> crearSolicitud(@RequestBody SolicitudCambioDevolucion solicitud) {
+    Map<String, String> errorResponse = new HashMap<>();
 
-    @PostMapping
-    public ResponseEntity<?> crearSolicitud(@RequestBody SolicitudCambioDevolucion solicitud) {
-        if (solicitud.getEstado_solicitud() == null ||
-            !ESTADOS_PERMITIDOS.contains(solicitud.getEstado_solicitud()) ||
-            solicitud.getMotivo_solicitud() == null ||
-            solicitud.getProducto_relacionado() == null ||
-            solicitud.getMensaje_recivido_cliente() == null ||
-            solicitud.getTipo_solicitud() == null ||
-            solicitud.getNombreCliente() == null ||
-            solicitud.getNumeroContactoCliente() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Todos los campos obligatorios deben ser ingresados y el estado de la solicitud debe ser válido.");
-        } else if (solicitud.getCorreo_cliente() != null && !PATTERN_EMAIL.matcher(solicitud.getCorreo_cliente()).matches()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El correo electrónico ingresado no tiene un formato válido.");
-        }
-        solicitudRepositorio.save(solicitud);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Solicitud creada con éxito");
+    if (solicitud.getMotivo_solicitud() == null || solicitud.getMotivo_solicitud().trim().isEmpty()) {
+        errorResponse.put("Motivo_solicitud", "El motivo de la solicitud es obligatorio");
+    } else if (solicitud.getMotivo_solicitud().length() > 70) {
+        errorResponse.put("Motivo_solicitud", "El motivo de la solicitud no debe exceder los 70 caracteres");
     }
+
+    if (solicitud.getProducto_relacionado() == null || solicitud.getProducto_relacionado().trim().isEmpty()) {
+        errorResponse.put("Producto_relacionado", "El producto relacionado es obligatorio");
+    } else if (solicitud.getProducto_relacionado().length() > 50) {
+        errorResponse.put("Producto_relacionado", "El producto relacionado no debe exceder los 50 caracteres");
+    }
+
+    if (solicitud.getMensaje_recivido_cliente() == null || solicitud.getMensaje_recivido_cliente().trim().isEmpty()) {
+        errorResponse.put("Mensaje_recivido_cliente", "El mensaje recibido del cliente es obligatorio");
+    } else if (solicitud.getMensaje_recivido_cliente().length() > 70) {
+        errorResponse.put("Mensaje_recivido_cliente", "El mensaje recibido del cliente no debe exceder los 70 caracteres");
+    }
+
+    if (solicitud.getTipo_solicitud() == null || solicitud.getTipo_solicitud().trim().isEmpty()) {
+        errorResponse.put("Tipo_solicitud", "El tipo de solicitud es obligatorio");
+    } else if (solicitud.getTipo_solicitud().length() > 30) {
+        errorResponse.put("Tipo_solicitud", "El tipo de solicitud no debe exceder los 30 caracteres");
+    }
+
+    if (solicitud.getNombreCliente() == null || solicitud.getNombreCliente().trim().isEmpty()) {
+        errorResponse.put("nombreCliente", "El nombre del cliente es obligatorio");
+    } else if (solicitud.getNombreCliente().length() > 40) {
+        errorResponse.put("nombreCliente", "El nombre del cliente no debe exceder los 40 caracteres");
+    }
+
+    if (solicitud.getNumeroContactoCliente() == null || solicitud.getNumeroContactoCliente().trim().isEmpty()) {
+        errorResponse.put("numeroContactoCliente", "El número de contacto del cliente es obligatorio");
+    } else if (solicitud.getNumeroContactoCliente().length() > 30) {
+        errorResponse.put("numeroContactoCliente", "El número de contacto del cliente no debe exceder los 30 caracteres");
+    }
+
+    if (!errorResponse.isEmpty()) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    // Asignar el estado de la solicitud a "0" (pendiente) por defecto
+    solicitud.setEstado_solicitud("0");
+
+    solicitudRepositorio.save(solicitud);
+    return ResponseEntity.status(HttpStatus.CREATED).body(new HashMap<>());
+}
 
     // Obtener solicitudes de cambio o devolución
     @GetMapping

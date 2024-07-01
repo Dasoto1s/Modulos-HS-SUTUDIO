@@ -27,24 +27,25 @@ public class Admin {
     @OneToMany(mappedBy = "admin")
     private List<Pedido> pedidos;
 
-    @OneToOne(mappedBy = "admin")
-    private Banner banner;
+   @OneToMany(mappedBy = "admin")
+private List<Banner> banners;
 
-    // Constructor sin parámetros
-    public Admin() {
-    }
-
-    // Constructor con parámetros
-
-    public Admin(Integer id, String email, String password, List<Inventario> inventarios, List<Pedido> pedidos, Banner banner) {
+    public Admin(Integer id, String email, String password, List<Inventario> inventarios, List<Pedido> pedidos, List<Banner> banners) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.inventarios = inventarios;
         this.pedidos = pedidos;
-        this.banner = banner;
+        this.banners = banners;
     }
+
+    // Constructor sin parámetros
+    public Admin() {
+    }
+
    
+
+    
 
     // Getters y Setters
     public Integer getId() {
@@ -87,12 +88,14 @@ public class Admin {
         this.pedidos = pedidos;
     }
 
-    public Banner getBanner() {
-        return banner;
+    public List<Banner> getBanners() {
+        return banners;
     }
 
-    public void setBanner(Banner banner) {
-        this.banner = banner;
+    public void setBanners(List<Banner> banners) {
+        this.banners = banners;
     }
+
+   
     
 }

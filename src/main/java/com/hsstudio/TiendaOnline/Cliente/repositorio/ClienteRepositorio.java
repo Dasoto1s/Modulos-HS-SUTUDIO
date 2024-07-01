@@ -14,6 +14,8 @@ public interface ClienteRepositorio extends JpaRepository<Cliente, String> {
 
     @Query("SELECT c FROM Cliente c JOIN CarritoCompras cc ON c.idCliente = cc.sessionId WHERE cc.sessionId = :sessionId")
     Cliente findBySessionId(@Param("sessionId") String sessionId);
+  
 
    
 }
+

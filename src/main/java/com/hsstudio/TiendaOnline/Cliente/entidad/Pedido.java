@@ -32,10 +32,10 @@ public class Pedido {
     private String departamento;
 
     @Column(name = "ciudad")
-    private String ciudad;
+    private String ciudad;  
     
-    @OneToOne(mappedBy = "pedido")
-    private Transaccion transaccion;
+     @OneToOne(mappedBy = "pedido", cascade = CascadeType.ALL)
+private Transaccion transaccion;
     
     @Column(name = "Estado_solicitud_bool")
     private String Estado_solicitud;

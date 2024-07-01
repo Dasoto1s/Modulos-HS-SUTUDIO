@@ -1,6 +1,7 @@
 package com.hsstudio.TiendaOnline.Admin.dto;
 
 import com.hsstudio.TiendaOnline.Admin.entidad.Producto;
+import java.math.BigInteger;
 
 import java.util.Date;
 import java.util.List;
@@ -16,11 +17,11 @@ public class PedidoDTO {
     private List<Producto> productos;
     private String nombreCliente;
     private String correoCliente;
-    private Integer telefonoCliente;
+    private BigInteger telefonoCliente;
     private String metodoPagoCliente;
     private String Estado_solicitud;
 
-    public PedidoDTO(Integer numeroPedido, String direccionEnvio, Date fechaPedido, String departamento, String ciudad, Integer numeroProductos, Float precioTotal, List<Producto> productos, String nombreCliente, String correoCliente, Integer telefonoCliente, String metodoPagoCliente, String Estado_solicitud) {
+    public PedidoDTO(Integer numeroPedido, String direccionEnvio, Date fechaPedido, String departamento, String ciudad, Integer numeroProductos, Float precioTotal, List<Producto> productos, String nombreCliente, String correoCliente, BigInteger telefonoCliente, String metodoPagoCliente, String Estado_solicitud) {
         this.numeroPedido = numeroPedido;
         this.direccionEnvio = direccionEnvio;
         this.fechaPedido = fechaPedido;
@@ -121,13 +122,15 @@ public class PedidoDTO {
         this.correoCliente = correoCliente;
     }
 
-    public Integer getTelefonoCliente() {
+    public BigInteger getTelefonoCliente() {
         return telefonoCliente;
     }
 
-    public void setTelefonoCliente(Integer telefonoCliente) {
+    public void setTelefonoCliente(BigInteger telefonoCliente) {
         this.telefonoCliente = telefonoCliente;
     }
+
+
 
     public String getMetodoPagoCliente() {
         return metodoPagoCliente;

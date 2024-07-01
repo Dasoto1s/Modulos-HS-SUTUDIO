@@ -16,9 +16,13 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Date;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -61,18 +65,25 @@ public class CarritoCompras implements Serializable{
     private String sessionId;
     
    
+     @Column(name = "fecha_creacion")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaCreacion;
     
     
     public CarritoCompras() {
     }
 
-    public CarritoCompras(Integer idCarrito, Integer numeroProductos, Float precioTotal, String sessionId, Cliente cliente) {
+    public CarritoCompras(Integer idCarrito, Integer numeroProductos, Float precioTotal, String sessionId, Date fechaCreacion) {
         this.idCarrito = idCarrito;
         this.numeroProductos = numeroProductos;
         this.precioTotal = precioTotal;
         this.sessionId = sessionId;
-       
+        this.fechaCreacion = fechaCreacion;
     }
+
+   
+
+   
 
    
     
@@ -85,10 +96,16 @@ public class CarritoCompras implements Serializable{
         this.sessionId = sessionId;
     }
 
+    public List<Producto> getProductos() {
+        return productos;
+    }
+
+    public void setProductos(List<Producto> productos) {
+        this.productos = productos;
+    }
+
     
-public List<Producto> getProductos() {
-    return productos;
-}
+
 
 
     public Integer getIdCarrito() {
@@ -122,6 +139,16 @@ public List<Producto> getProductos() {
     public void setPedidos(List<Pedido> pedidos) {
         this.pedidos = pedidos;
     }
+
+    public Date getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(Date fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
+  
 
    
 
