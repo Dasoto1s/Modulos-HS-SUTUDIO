@@ -66,7 +66,7 @@ public ResponseEntity<String> eliminarProductoDestacado(@PathVariable Integer de
         destacadosRepositorio.delete(productoDestacadoOptional.get());
         return ResponseEntity.ok("Producto eliminado de destacados");
     } else {
-        return ResponseEntity.notFound().build();
+       return ResponseEntity.notFound().build();
     }
 }
 

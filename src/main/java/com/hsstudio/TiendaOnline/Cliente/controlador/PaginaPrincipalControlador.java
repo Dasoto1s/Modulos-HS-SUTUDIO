@@ -11,7 +11,9 @@
     import com.hsstudio.TiendaOnline.Cliente.entidad.Promociones;
     import com.hsstudio.TiendaOnline.Cliente.repositorio.DestacadosRepositorio;
     import com.hsstudio.TiendaOnline.Cliente.repositorio.PromocionesRepositorio;
+import java.util.HashMap;
     import java.util.List;
+import java.util.Map;
     import java.util.Optional;
     import java.util.stream.Collectors;
     import org.springframework.beans.factory.annotation.Autowired;
@@ -64,12 +66,25 @@
 
 
              // Obtener un producto por su ID
-  @GetMapping("/producto/{id}")
-        public ResponseEntity<Producto> obtenerProductoPorId(@PathVariable Integer id) {
-            Optional<Producto> productoOptional = productoRepositorio.findById(id);
-            return productoOptional.map(ResponseEntity::ok)
-                                   .orElseGet(() -> ResponseEntity.notFound().build());
+ @GetMapping("/producto/{id}")
+public ResponseEntity<?> obtenerProductoPorId(@PathVariable Integer id) {
+    Optional<Producto> productoOptional = productoRepositorio.findById(id);
+    if (productoOptional.isPresent()) {
+        Producto producto = productoOptional.get();
+        Optional<Promociones> promocionOptional = promocionesRepositorio.findByProductoIdProducto(producto.getIdProducto());
+        if (promocionOptional.isPresent()) {
+            Promociones promocion = promocionOptional.get();
+            Map<String, Object> response = new HashMap<>();
+            response.put("producto", producto);
+            response.put("descuento", promocion.getDescuento());
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.ok(producto);
         }
+    } else {
+        return ResponseEntity.notFound().build();
+    }
+}
 
 
         @GetMapping("/productos/destacados")

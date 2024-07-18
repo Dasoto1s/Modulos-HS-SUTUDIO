@@ -20,14 +20,10 @@ public class CarritoComprasService {
 public void limpiarCarrito(String sessionId) {
     CarritoCompras carrito = carritoComprasRepositorio.findBySessionId(sessionId);
     if (carrito != null) {
-        if (carrito.getProductos() != null) {
-            carrito.getProductos().clear();
-        }
+        carrito.getProductos().clear();
         carrito.setNumeroProductos(0);
         carrito.setPrecioTotal(0.0f);
         carritoComprasRepositorio.save(carrito);
-    } else {
-        throw new RuntimeException("Carrito no encontrado para la sesión proporcionada");
     }
 }
     

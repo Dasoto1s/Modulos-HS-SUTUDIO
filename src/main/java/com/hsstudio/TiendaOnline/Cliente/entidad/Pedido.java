@@ -37,14 +37,18 @@ public class Pedido {
      @OneToOne(mappedBy = "pedido", cascade = CascadeType.ALL)
 private Transaccion transaccion;
     
-    @Column(name = "Estado_solicitud_bool")
-    private String Estado_solicitud;
+ 
+    @Column(name = "Estado_pedido")
+private String estadoPedido;
     
+    private Double totalConDescuento;
+    
+    private Double precioTotal; 
     
 
     // Constructor, getters y setters
 
-    public Pedido(Integer numeroPedido, String direccionEnvio, Date fechaPedido, CarritoCompras carritoCompras, Admin admin, String departamento, String ciudad, Transaccion transaccion, String Estado_solicitud) {
+    public Pedido(Integer numeroPedido, String direccionEnvio, Date fechaPedido, CarritoCompras carritoCompras, Admin admin, String departamento, String ciudad, Transaccion transaccion, String estadoPedido, Double totalConDescuento, Double precioTotal) {
         this.numeroPedido = numeroPedido;
         this.direccionEnvio = direccionEnvio;
         this.fechaPedido = fechaPedido;
@@ -53,11 +57,11 @@ private Transaccion transaccion;
         this.departamento = departamento;
         this.ciudad = ciudad;
         this.transaccion = transaccion;
-        this.Estado_solicitud = Estado_solicitud;
+        this.estadoPedido = estadoPedido;
+        this.totalConDescuento = totalConDescuento;
+        this.precioTotal = precioTotal;
     }
 
-   
-    
 
  
         public Pedido() {
@@ -120,13 +124,6 @@ private Transaccion transaccion;
         this.ciudad = ciudad;
     }
 
-    public String getEstado_solicitud() {
-        return Estado_solicitud;
-    }
-
-    public void setEstado_solicitud(String Estado_solicitud) {
-        this.Estado_solicitud = Estado_solicitud;
-    }
 
     public Transaccion getTransaccion() {
         return transaccion;
@@ -135,6 +132,31 @@ private Transaccion transaccion;
     public void setTransaccion(Transaccion transaccion) {
         this.transaccion = transaccion;
     }
+    
+public String getEstadoPedido() {
+    return estadoPedido;
+}
+
+public void setEstadoPedido(String estadoPedido) {
+    this.estadoPedido = estadoPedido;
+}
+
+    public Double getTotalConDescuento() {
+        return totalConDescuento;
+    }
+
+    public void setTotalConDescuento(Double totalConDescuento) {
+        this.totalConDescuento = totalConDescuento;
+    }
+
+    public Double getPrecioTotal() {
+        return precioTotal;
+    }
+
+    public void setPrecioTotal(Double precioTotal) {
+        this.precioTotal = precioTotal;
+    }
+
 
     
 }

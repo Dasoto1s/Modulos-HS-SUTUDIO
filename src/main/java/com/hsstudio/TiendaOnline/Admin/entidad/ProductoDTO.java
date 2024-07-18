@@ -12,10 +12,11 @@ public class ProductoDTO {
     private Float cantidad;
     private Integer stock;
     private Integer cantidadMinimaRequerida;
+    private Float precioConDescuento;
 
     private byte[] imagen;
 
-    public ProductoDTO(Integer idProducto, String nombre, String descripcion, float precio, int talla, String color, String genero, String tipoZapato, Float cantidad, Integer stock, Integer cantidadMinimaRequerida, byte[] imagen) {
+    public ProductoDTO(Integer idProducto, String nombre, String descripcion, float precio, int talla, String color, String genero, String tipoZapato, Float cantidad, Integer stock, Integer cantidadMinimaRequerida, Float precioConDescuento, byte[] imagen) {
         this.idProducto = idProducto;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -27,8 +28,11 @@ public class ProductoDTO {
         this.cantidad = cantidad;
         this.stock = stock;
         this.cantidadMinimaRequerida = cantidadMinimaRequerida;
+        this.precioConDescuento = precioConDescuento;
         this.imagen = imagen;
     }
+
+
 
    
 
@@ -130,5 +134,14 @@ public class ProductoDTO {
     public void setCantidadMinimaRequerida(Integer cantidadMinimaRequerida) {
         this.cantidadMinimaRequerida = cantidadMinimaRequerida;
     }
+
+    public Float getPrecioConDescuento() {
+        return precioConDescuento;
+    }
+
+    public void setPrecioConDescuento(Float precioConDescuento) {
+        this.precioConDescuento = precioConDescuento;
+    }
+    
     
 }

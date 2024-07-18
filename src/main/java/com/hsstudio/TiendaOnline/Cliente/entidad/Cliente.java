@@ -4,18 +4,29 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import java.math.BigInteger;
 
 @Entity
 @Table(name = "cliente")
 public class Cliente {
     @Id
+    @NotBlank(message = "El ID del cliente no puede estar vacío")
     @Column(name = "id_cliente")
     private String idCliente;
+
+    @NotBlank(message = "El nombre no puede estar vacío")
+    @Size(max = 100, message = "El nombre no puede tener más de 100 caracteres")
     @Column(name = "nombre")
     private String nombre;
+
+    @NotBlank(message = "El correo no puede estar vacío")
+    @Email(message = "El correo debe ser una dirección de correo válida")
     @Column(name = "Correo")
     private String correo;
+
     @Column(name = "Telefono")
     private BigInteger telefono;
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hsstudio.TiendaOnline.Cliente.entidad.Pedido;
 import jakarta.persistence.*;
 import java.util.List;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Entity(name = "administrador")
 public class Admin {
@@ -20,7 +21,7 @@ public class Admin {
     private String password;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "admin")
+   @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Inventario> inventarios;
 
     @JsonIgnore
@@ -95,7 +96,11 @@ private List<Banner> banners;
     public void setBanners(List<Banner> banners) {
         this.banners = banners;
     }
-
+ 
+    public void setPasswordWithHash(String rawPassword) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        this.password = encoder.encode(rawPassword);
+    }
    
     
 }

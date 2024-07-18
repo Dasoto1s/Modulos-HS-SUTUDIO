@@ -8,9 +8,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import jakarta.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/cliente")
@@ -18,13 +22,11 @@ public class ClienteControlador {
     private final ClienteRepositorio clienteRepositorio;
     private final CarritoComprasRepositorio carritoComprasRepositorio;
 
-
     @Autowired
     public ClienteControlador(ClienteRepositorio clienteRepositorio, 
                               CarritoComprasRepositorio carritoComprasRepositorio) {
         this.clienteRepositorio = clienteRepositorio;
         this.carritoComprasRepositorio = carritoComprasRepositorio;
-  
     }
 
     @GetMapping
@@ -40,41 +42,53 @@ public class ClienteControlador {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    @Transactional
-    public ResponseEntity<?> crearCliente(@RequestBody Cliente nuevoCliente, @RequestHeader("X-Session-Id") String sessionId) {
-        System.out.println("Iniciando creación de cliente");
-        System.out.println("Session ID recibido en crearCliente: " + sessionId);
-        System.out.println("Datos del cliente recibidos: " + nuevoCliente);
+   @PostMapping
+@Transactional
+public ResponseEntity<?> crearCliente(@RequestBody Cliente nuevoCliente, @RequestHeader("X-Session-Id") String sessionId) {
+    System.out.println("Iniciando creación de cliente");
+    System.out.println("Session ID recibido en crearCliente: " + sessionId);
+    System.out.println("Datos del cliente recibidos: " + nuevoCliente);
 
-        if (sessionId == null || sessionId.isEmpty()) {
-            return ResponseEntity.badRequest().body("No se recibió un sessionId válido");
-        }
-
-        nuevoCliente.setIdCliente(sessionId);
-
-        try {
-            System.out.println("Intentando guardar el cliente en la base de datos...");
-            Cliente clienteGuardado = clienteRepositorio.save(nuevoCliente);
-            System.out.println("Cliente guardado exitosamente: " + clienteGuardado);
-
-            Cliente clienteVerificado = clienteRepositorio.findById(sessionId).orElse(null);
-            if (clienteVerificado != null) {
-                System.out.println("Cliente verificado en la base de datos: " + clienteVerificado);
-                return ResponseEntity.ok(clienteVerificado);
-            } else {
-                System.out.println("¡ADVERTENCIA! No se pudo verificar el cliente en la base de datos después de guardarlo.");
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("El cliente se guardó pero no se pudo verificar en la base de datos");
-            }
-        } catch (Exception e) {
-            System.err.println("Error al guardar el cliente: " + e.getMessage());
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al guardar el cliente: " + e.getMessage());
-        }
+    if (sessionId == null || sessionId.isEmpty()) {
+        return ResponseEntity.badRequest().body("No se recibió un sessionId válido");
     }
-    
-    
-   
+
+    // Validación manual
+    List<String> errores = new ArrayList<>();
+    if (nuevoCliente.getNombre() == null || nuevoCliente.getNombre().trim().isEmpty()) {
+        errores.add("El nombre no puede estar vacío");
+    }
+    if (nuevoCliente.getCorreo() == null || nuevoCliente.getCorreo().trim().isEmpty()) {
+        errores.add("El correo no puede estar vacío");
+    } else if (!nuevoCliente.getCorreo().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+        errores.add("El correo debe ser una dirección de correo válida");
+    }
+
+    if (!errores.isEmpty()) {
+        return ResponseEntity.badRequest().body(errores);
+    }
+
+    nuevoCliente.setIdCliente(sessionId);
+
+    try {
+        System.out.println("Intentando guardar el cliente en la base de datos...");
+        Cliente clienteGuardado = clienteRepositorio.save(nuevoCliente);
+        System.out.println("Cliente guardado exitosamente: " + clienteGuardado);
+        
+        Cliente clienteVerificado = clienteRepositorio.findById(sessionId).orElse(null);
+        if (clienteVerificado != null) {
+            System.out.println("Cliente verificado en la base de datos: " + clienteVerificado);
+            return ResponseEntity.ok(clienteVerificado);
+        } else {
+            System.out.println("¡ADVERTENCIA! No se pudo verificar el cliente en la base de datos después de guardarlo.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("El cliente se guardó pero no se pudo verificar en la base de datos");
+        }
+    } catch (Exception e) {
+        System.err.println("Error al guardar el cliente: " + e.getMessage());
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error al guardar el cliente: " + e.getMessage());
+    }
+}
 }

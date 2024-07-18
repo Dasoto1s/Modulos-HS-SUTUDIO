@@ -20,6 +20,8 @@ public class PedidoDTO {
     private BigInteger telefonoCliente;
     private String metodoPagoCliente;
     private String Estado_solicitud;
+    private String estadoPedido;
+    
 
     public PedidoDTO(Integer numeroPedido, String direccionEnvio, Date fechaPedido, String departamento, String ciudad, Integer numeroProductos, Float precioTotal, List<Producto> productos, String nombreCliente, String correoCliente, BigInteger telefonoCliente, String metodoPagoCliente, String Estado_solicitud) {
         this.numeroPedido = numeroPedido;
@@ -147,6 +149,15 @@ public class PedidoDTO {
     public void setEstado_solicitud(String Estado_solicitud) {
         this.Estado_solicitud = Estado_solicitud;
     }
+    
+public String getEstadoPedido() {
+    return estadoPedido;
+}
+
+public void setEstadoPedido(String estadoPedido) {
+    this.estadoPedido = estadoPedido;
+}
+  
 
     
 }

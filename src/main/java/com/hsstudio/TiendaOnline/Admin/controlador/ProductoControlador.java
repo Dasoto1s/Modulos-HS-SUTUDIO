@@ -30,6 +30,7 @@
     import java.util.stream.Collectors;
     import org.springframework.data.jpa.repository.Query;
     import org.springframework.data.repository.query.Param;
+    import com.hsstudio.TiendaOnline.Admin.entidad.MensajeRespuesta;
 
     @RestController
     @RequestMapping("/productos")
@@ -62,7 +63,7 @@
             this.secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
         }
 
-        protected  Integer extraerAdminIdDesdeToken(String authorizationHeader) {
+        public  Integer extraerAdminIdDesdeToken(String authorizationHeader) {
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 String token = authorizationHeader.substring(7);
                 DecodedJWT decodedJWT = JWT.decode(token);
@@ -108,90 +109,95 @@
 
  
         //crear producto
-    
-      @PostMapping
-        public ResponseEntity<Object> crearProducto(
-                @RequestHeader("Authorization") String authorizationHeader,
-                @RequestParam("nombre") String nombre,
-                @RequestParam("descripcion") String descripcion,
-                @RequestParam("precio") float precio,
-                @RequestParam("talla") String tallaStr,
-                @RequestParam("color") String color,
-                @RequestParam("genero") String genero,
-                @RequestParam("tipoZapato") String tipoZapato,
-                @RequestParam("imagen") MultipartFile imagen,
-                @RequestParam("cantidad") int cantidad,
-                @RequestParam("stock") int stock,
-                @RequestParam("cantidadMinimaRequerida") int cantidadMinimaRequerida
-        ) throws IOException {
-            // Validar que todos los campos requeridos estén presentes
-            if (nombre == null || nombre.isEmpty() ||
-                descripcion == null || descripcion.isEmpty() ||
-                tallaStr == null || tallaStr.isEmpty() ||
-                color == null || color.isEmpty() ||
-                genero == null || genero.isEmpty() ||
-                tipoZapato == null || tipoZapato.isEmpty() ||
-                imagen == null || imagen.isEmpty() ||
-                cantidad < 0 || stock < 0 || cantidadMinimaRequerida < 0) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Todos los campos requeridos deben estar presentes y ser válidos."));
-            }
+    @PostMapping
+public ResponseEntity<Object> crearProducto(
+        @RequestHeader("Authorization") String authorizationHeader,
+        @RequestParam("nombre") String nombre,
+        @RequestParam("descripcion") String descripcion,
+        @RequestParam("precio") float precio,
+        @RequestParam("talla") String tallaStr,
+        @RequestParam("color") String color,
+        @RequestParam("genero") String genero,
+        @RequestParam("tipoZapato") String tipoZapato,
+        @RequestParam("imagen") MultipartFile imagen,
+        @RequestParam("cantidad") int cantidad,
+        @RequestParam("stock") int stock,
+        @RequestParam("cantidadMinimaRequerida") int cantidadMinimaRequerida
+) throws IOException {
+    // Verificar la autenticación
+    if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("No autorizado"));
+    }
 
-            // Verificar la presencia del token JWT
-            if (authorizationHeader != null && !authorizationHeader.isEmpty()) {
-                // Obtener el ID del administrador desde el token JWT
-                Integer adminId = extraerAdminIdDesdeToken(authorizationHeader);
+    // Validar que todos los campos requeridos estén presentes
+    if (nombre == null || nombre.isEmpty() ||
+        descripcion == null || descripcion.isEmpty() ||
+        tallaStr == null || tallaStr.isEmpty() ||
+        color == null || color.isEmpty() ||
+        genero == null || genero.isEmpty() ||
+        tipoZapato == null || tipoZapato.isEmpty() ||
+        imagen == null || imagen.isEmpty() ||
+        cantidad < 0 || stock < 0 || cantidadMinimaRequerida < 0) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Todos los campos requeridos deben estar presentes y ser válidos."));
+    }
 
-                // Buscar al administrador por su ID
-                Optional<Admin> adminOptional = adminRepositorio.findById(adminId);
+    // Obtener el ID del administrador desde el token JWT
+    Integer adminId;
+    try {
+        adminId = extraerAdminIdDesdeToken(authorizationHeader);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Token inválido"));
+    }
 
-                if (adminOptional.isPresent()) {
-                    Admin admin = adminOptional.get();
+    // Buscar al administrador por su ID
+    Admin admin = adminRepositorio.findById(adminId)
+            .orElse(null);
 
-                    // Validar la longitud de la talla
-                    if (tallaStr.length() != 2) {
-                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("La talla debe tener exactamente dos dígitos."));
-                    }
+    if (admin == null) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Administrador no encontrado"));
+    }
 
-                    // Convertir la talla a un entero
-                    int talla;
-                    try {
-                        talla = Integer.parseInt(tallaStr);
-                        if (talla <= 0) {
-                            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("La talla debe ser un número positivo."));
-                        }
-                    } catch (NumberFormatException e) {
-                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("La talla no es un número válido."));
-                    }
+    // Validar la longitud de la talla
+    if (tallaStr.length() != 2) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("La talla debe tener exactamente dos dígitos."));
+    }
 
-                    Producto producto = new Producto();
-                    producto.setNombre(nombre);
-                    producto.setDescripcion(descripcion);
-                    producto.setPrecio(precio);
-                    producto.setTalla(talla);
-                    producto.setColor(color);
-                    producto.setGenero(genero);
-                    producto.setTipoZapato(tipoZapato);
-                    producto.setImagen(imagen.getBytes());
-
-                    Inventario inventario = new Inventario();
-                    inventario.setAdmin(admin);
-                    inventario.setCantidad(cantidad);
-                    inventario.setStock(stock);
-                    inventario.setCantidad_minima_requerida(cantidadMinimaRequerida);
-                    producto.setInventario(inventario);
-                    inventario.setProducto(producto);
-
-                    Producto productoGuardado = productoRepositorio.save(producto);
-
-                    return ResponseEntity.status(HttpStatus.CREATED).body(productoGuardado);
-                } else {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-                }
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-            }
+    // Convertir la talla a un entero
+    int talla;
+    try {
+        talla = Integer.parseInt(tallaStr);
+        if (talla <= 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("La talla debe ser un número positivo."));
         }
+    } catch (NumberFormatException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("La talla no es un número válido."));
+    }
 
+    Producto producto = new Producto();
+    producto.setNombre(nombre);
+    producto.setDescripcion(descripcion);
+    producto.setPrecio(precio);
+    producto.setTalla(talla);
+    producto.setColor(color);
+    producto.setGenero(genero);
+    producto.setTipoZapato(tipoZapato);
+    producto.setImagen(imagen.getBytes());
+
+    Inventario inventario = new Inventario();
+    inventario.setAdmin(admin);
+    inventario.setCantidad(cantidad);
+    inventario.setStock(stock);
+    inventario.setCantidad_minima_requerida(cantidadMinimaRequerida);
+    producto.setInventario(inventario);
+    inventario.setProducto(producto);
+
+    try {
+        Producto productoGuardado = productoRepositorio.save(producto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(productoGuardado);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Error al guardar el producto: " + e.getMessage()));
+    }
+}
         // Actualizar un producto existente
     @PutMapping("/{id}")
     public ResponseEntity<Producto> actualizarProducto(
@@ -279,28 +285,7 @@
            return ResponseEntity.ok("Producto eliminado con éxito");
        }
 
-        // Inicio de sesión del administrador
-        @PostMapping("/admin/login")
-        public ResponseEntity<?> login(@RequestParam String email, @RequestParam String password) {
-            Admin existingAdmin = adminRepositorio.findByEmail(email);
-
-            if (existingAdmin != null && existingAdmin.getPassword().equals(password)) {
-                String token = Jwts.builder()
-                        .setSubject(existingAdmin.getEmail())
-                        .claim("adminId", existingAdmin.getId())
-                        .setIssuedAt(new Date())
-                        .signWith(secretKey)
-                        .compact();
-
-                Map<String, Object> response = new HashMap<>();
-                response.put("message", "Inicio de sesión exitoso");
-                response.put("token", token);
-
-                return ResponseEntity.ok().body(response);
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Correo electrónico o contraseña incorrectos");
-            }
-        }
+      
 
       @GetMapping("/buscar")
     public ResponseEntity<Object> buscarProductos(
@@ -359,17 +344,7 @@
         }
     }
 
-    class MensajeRespuesta {
-        private String mensaje;
-
-        public MensajeRespuesta(String mensaje) {
-            this.mensaje = mensaje;
-        }
-
-        public String getMensaje() {
-            return mensaje;
-        }
-    }
+  
 
     class ErrorResponse {
         private String mensaje;
